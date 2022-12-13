@@ -1,5 +1,9 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { h } from 'preact';
+import { h, render } from 'preact';
+
+//import settings from './settings';
+import { MetaGeneratedTemplatesSettingTab } from './settings/settingTab';
+
 interface MetaGeneratedTemplatesSettings {
 	mySetting: string;
 	// template folder string
