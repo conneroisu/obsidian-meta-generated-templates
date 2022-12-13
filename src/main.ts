@@ -1,17 +1,18 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-
-// Remember to rename these classes and interfaces!
-
-interface MyPluginSettings {
+import { h } from 'preact';
+interface MetaGeneratedTemplatesSettings {
 	mySetting: string;
+	// template folder string
+	templateFolder: string;
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+const DEFAULT_SETTINGS: MetaGeneratedTemplatesSettings = {
+	mySetting: 'default',
+	templateFolder: 'templates'
 }
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class MetaGeneratedTemplates extends Plugin {
+	settings: MetaGeneratedTemplatesSettings;
 
 	async onload() {
 		await this.loadSettings();
@@ -108,9 +109,9 @@ class SampleModal extends Modal {
 }
 
 class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+	plugin: MetaGeneratedTemplates;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: MetaGeneratedTemplates) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -133,5 +134,17 @@ class SampleSettingTab extends PluginSettingTab {
 					this.plugin.settings.mySetting = value;
 					await this.plugin.saveSettings();
 				}));
+		new Setting(containerEl)
+			.setName('Template Folder')
+			.setDesc('Folder where templates for the meta generated templates plugin are stored')
+			.addText(text => text
+				.setPlaceholder('templates/')
+				.setValue(this.plugin.settings.templateFolder)
+				.onChange(async (value) => {
+					console.log('Template Folder: ' + value);
+					this.plugin.settings.templateFolder = value;
+					await this.plugin.saveSettings();
+				}));
+
 	}
 }
