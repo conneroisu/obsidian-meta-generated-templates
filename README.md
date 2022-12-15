@@ -1,96 +1,36 @@
-# Obsidian Sample Plugin
+# Obsidian Meta Generated Templates Plugin
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+The meta generated templates plugin allows for the user to generate anything from the values of the metadata in their notes in markdown from templates in a designated folder with configurable insertion characteristics. This plugin allows for a user to define certain elements that can be inserted into a template, such as text, images, code snippets, etc. This allows for the user to quickly generate content that is formatted in markdown with ease and efficiency. The plugin also allows for the user to customize the template by adding additional elements or removing existing ones through the power of markdown. This makes it easy for the user to create custom templates that can be used over and over again. It also allows for users to share templates with each other so that they can collaborate on a project within the same vault without needing to start from scratch.
 
 This project uses Typescript to provide type checking and documentation.
 The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
 
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
+Use preconfigured templates to dynamically add to your notes through the use of meta-data fields in your notes. 
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Changes the default font color to red using `styles.css`.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
 
-## First time developing plugins?
+The Metadata Templates plugin for obsidian allows users to easily insert or append templates based on values of metadata fields. This can save time and improve consistency in document creation. Users can customize the templates within obsidian and their corresponding metadata field values within the plugin settings.
 
-Quick starting guide for new plugin devs:
+The benefits of using this plugin include saving time in document creation, providing consistency in document format, and allowing users to customize their templates through the utilization of using markdown files present within the obsidian vault.Overall, the Metadata Templates plugin is a useful tool for any user of Obsidian who is looking to save time and improve consistency when creating documents.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+# Insertion Options
+Additionally, the user has the option to choose how the template is inserted into the document. They can choose to prepend the template, which will insert it before any other content in the note. They can also choose to append the template, which will add it to the end of the note. Finally, the user can choose to insert the template, which will create a delimited area within the note where the template can be included.
 
-## Releasing new releases
+This flexibility in insertion options allows the user to customize how the templates are used in their documents and ensures that they can be easily integrated into their existing workflow. Overall, the Metadata Templates plugin is a powerful tool for quickly and easily creating consistent, professional-looking documents within the obsidian markdown editor.
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+| Insertion Option | Description                                                             |
+| ---------------- | ----------------------------------------------------------------------- |
+| Prepend          | Insert the given template before any content in the note                |
+| Append           | Insert the given template after any content in the note                 |
+| Insert           | Insert the given template at a predefined delimiter inside of your note |
+|                  |                                                                         |
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
 
-## Adding your plugin to the community plugin list
 
-- Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+# Use Cases
 
-## How to use
+A user is writing an invoice and includes a `client` metadata field with the value `Acme Corporation`. The plugin automatically inserts a template with the company's logo, contact information, and payment terms at the beginning of the document.
 
-- Clone this repo.
-- `npm i` or `yarn` to install dependencies
-- `npm run dev` to start compilation in watch mode.
+A student wants to include dataview information about the note if the type is `Homework`.
 
-## Manually installing the plugin
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
-
-## API Documentation
-
-See https://github.com/obsidianmd/obsidian-api
