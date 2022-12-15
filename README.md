@@ -24,7 +24,7 @@ This flexibility in insertion options allows the user to customize how the templ
 | Insert           | Insert the given template at a predefined delimiter inside of your note |
 |                  |                                                                         |
 
-
+## ADDITIONAL (FOR EACH VALUE in field setting to be Added)
 
 # Use Cases
 
