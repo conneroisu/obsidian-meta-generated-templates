@@ -33,4 +33,7 @@ A user is writing an invoice and includes a `client` metadata field with the val
 A student wants to include dataview information about the note if the type is `Homework`.
 
 
+Generate Workouts from the Body Part selector in your workout notes. 
+
+
 
