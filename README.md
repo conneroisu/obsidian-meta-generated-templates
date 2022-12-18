@@ -1,5 +1,7 @@
 # Obsidian Meta Generated Templates Plugin
 
+Make sure to back up your vault before using this plugin. While I have tested it agaist my vault, the plugin has not been tested on other vaults besides mine currently.
+
 The meta generated templates plugin allows for the user to generate anything from the values of the metadata in their notes in markdown from templates in a designated folder with configurable insertion characteristics. This plugin allows for a user to define certain elements that can be inserted into a template, such as text, images, code snippets, etc. This allows for the user to quickly generate content that is formatted in markdown with ease and efficiency. The plugin also allows for the user to customize the template by adding additional elements or removing existing ones through the power of markdown. This makes it easy for the user to create custom templates that can be used over and over again. It also allows for users to share templates with each other so that they can collaborate on a project within the same vault without needing to start from scratch.
 
 This project uses Typescript to provide type checking and documentation.
