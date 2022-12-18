@@ -1,28 +1,32 @@
 import { Console } from 'console';
-import { readFile } from 'fs';
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, TFile, Vault, MetadataCache, TFolder } from 'obsidian';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, TFile, Vault, MetadataCache, TFolder, View, editorEditorField } from 'obsidian';
 import { SampleSettingTab } from './SampleSettingTab';
+import { Line } from '@codemirror/state';
 
 
 interface MetaGeneratedTemplatesSettings {
 	mySetting: string;
 	// template folder string
-	templateFolder: TFolder;
+	templateFolder: string;
 	targetfields: string[];
 	targetfieldValues: string[];
 	templateCSV: string[];
+	insertLocation: string[];
 }
 
 const DEFAULT_SETTINGS: MetaGeneratedTemplatesSettings = {
 	mySetting: 'default',
-	templateFolder: 'templates',
+	templateFolder: 'meta-gen templates',
 	targetfields: [],
 	targetfieldValues: [],  
-	templateCSV: []
+	templateCSV: [],
+	insertLocation: ['end', 'start']
 }
 
 export default class MetaGeneratedTemplates extends Plugin {
 	settings: MetaGeneratedTemplatesSettings;
+	tempContent: string;
+	startingLine: number;
 
 	async onload() {
 		await this.loadSettings();
@@ -51,8 +55,7 @@ export default class MetaGeneratedTemplates extends Plugin {
 		this.addCommand({
 			id: 'sample-editor-command',
 			name: 'Sample editor command',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				editor.replaceSelection('Sample Editor Command');
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				// metadata cache
 				const cache = this.app.metadataCache;
 				const cacheState = cache.getFileCache(view.file);
@@ -64,15 +67,13 @@ export default class MetaGeneratedTemplates extends Plugin {
 					for(let i = 0; i < this.settings.targetfields.length; i++){
 						if(cacheState.frontmatter[this.settings.targetfields[i]] == this.settings.targetfieldValues[i]){
 							console.log("template state is " + this.settings.targetfieldValues[i]);
-							// get the path of the template fold
-							const templateFolderPath = (this.settings.templateFolder);
-							//insert at the end of the file the template with the same index
-							editor.setCursor(editor.lineCount(), 0);
-							// Get the content from template folder with the name of templateCSV[i]
-							// Get TFile from templateFolderPath and templateCSV[i]
-							const templateFile = this.app.vault.getAbstractFileByPath(templateFolderPath + "/" + this.settings.templateCSV[i]);
-							const content = this.app.vault.read(templateFile);
-
+							// get the template file
+							await this.getTemplateFileContent(this.settings.templateFolder + "/" + this.settings.templateCSV[i]);
+									// get the text of the template file
+									// insert the template text at the end of the file
+							this.writeToFile(i, view.file, editor);
+							console.log("cursor is at " + view.editor.getCursor());
+										
 						}
 
 					}
@@ -126,7 +127,78 @@ export default class MetaGeneratedTemplates extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+	async writeToFile(int: number, file: TFile, editor: Editor): Promise<void>{
+		// Get the state of the insert location setting with index int
+		const insertLocation = this.settings.insertLocation[int];
+		if(insertLocation == 'end'){
+			// Append to the end of the file
+			// if(activeFile){
+				this.app.vault.append(file, this.tempContent);
+			// } 
+		}else if(insertLocation == 'start'){
+			// Get the line of where the metadata ends marked by --- and ---
+			// Parse
+			await this.getStartLine(file);
+			// Prepend to the start of the file
+			console.log("startingLine is " + this.startingLine);
+			editor.replaceRange(this.tempContent, {line: this.startingLine, ch:0 });
+		}
+}
 		
+	async getStartLine(tfile: TFile): Promise<void>{
+		// Get the line of where the metadata ends marked by --- and ---
+		// Parse the file
+		const markdownFiles = this.app.vault.getMarkdownFiles();
+		const fname = tfile.basename;
+		markdownFiles.forEach(async (file) => {
+				// Read file with cacheRead
+				if(file.basename == fname){
+
+				const cRead = await this.app.vault.cachedRead(file); {
+					// Convert to string
+					const content = cRead.toString();
+					console.log("content is1 " + content);
+					// find line where metadata ends using --- and content
+					const contentArray = content.split("\n");
+					console.log("content is2 " + contentArray);
+					// Find the line where the metadata ends
+					let startingLine = 0;
+					let count = 0;
+					for(let i = 0; i < 100; i++){
+						if(contentArray[i].startsWith("---")){
+							count++;
+							if(count > 1){
+								startingLine = i + 1;
+								break;
+							}else{
+								continue;
+							}
+						}
+					}
+					this.startingLine = startingLine;
+
+				}
+				}
+
+		});
+	}
+	getTemplateFileContent(name: string): void{
+		const markdownFiles = app.vault.getMarkdownFiles();
+		const templateFol = this.settings.templateFolder;
+		markdownFiles.forEach(async (file) => {
+			if(file.path.startsWith(templateFol) && file.path.contains(name)){
+				// Read file with cacheRead
+				const cRead = await this.app.vault.cachedRead(file); {
+					// Convert to string
+					const content = cRead.toString();
+					console.log("content is1 " + content);
+					this.tempContent = content;
+				}
+
+			}
+		});
+		return;
+	}
 }
 
 class SampleModal extends Modal {

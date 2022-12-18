@@ -74,6 +74,20 @@ export class SampleSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}
 				));
+		new Setting(containerEl)
+			.setName('Insertion Points CSV')
+			.setDesc('The array used in the template to indicate the insertion point per csv in targets.')
+			.addText(text => text
+				.setPlaceholder('insertionPoint')
+				.setValue(this.plugin.settings.insertLocation.join(', '))
+				.onChange(async (value) => {
+					console.log('Insertion Points CSV: ' + value);
+					this.plugin.settings.insertLocation = value.split(',').map(x => x.trim());
+					await this.plugin.saveSettings();
+				}
+				));
+				
+
 
 
 	}
