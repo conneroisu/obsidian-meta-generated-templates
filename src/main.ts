@@ -1,18 +1,24 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
-import { h, render } from 'preact';
+import { Console } from 'console';
+import { readFile } from 'fs';
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, TFile, Vault, MetadataCache, TFolder } from 'obsidian';
+import { SampleSettingTab } from './SampleSettingTab';
 
-//import settings from './settings';
-import { MetaGeneratedTemplatesSettingTab } from './settings/settingTab';
 
 interface MetaGeneratedTemplatesSettings {
 	mySetting: string;
 	// template folder string
-	templateFolder: string;
+	templateFolder: TFolder;
+	targetfields: string[];
+	targetfieldValues: string[];
+	templateCSV: string[];
 }
 
 const DEFAULT_SETTINGS: MetaGeneratedTemplatesSettings = {
 	mySetting: 'default',
-	templateFolder: 'templates'
+	templateFolder: 'templates',
+	targetfields: [],
+	targetfieldValues: [],  
+	templateCSV: []
 }
 
 export default class MetaGeneratedTemplates extends Plugin {
@@ -46,8 +52,34 @@ export default class MetaGeneratedTemplates extends Plugin {
 			id: 'sample-editor-command',
 			name: 'Sample editor command',
 			editorCallback: (editor: Editor, view: MarkdownView) => {
-				console.log(editor.getSelection());
 				editor.replaceSelection('Sample Editor Command');
+				// metadata cache
+				const cache = this.app.metadataCache;
+				const cacheState = cache.getFileCache(view.file);
+				if(cacheState){
+					if(!cacheState.frontmatter){
+						return;
+					}
+					// for all values in targetfields that have a value in targetfieldValues with the same index
+					for(let i = 0; i < this.settings.targetfields.length; i++){
+						if(cacheState.frontmatter[this.settings.targetfields[i]] == this.settings.targetfieldValues[i]){
+							console.log("template state is " + this.settings.targetfieldValues[i]);
+							// get the path of the template fold
+							const templateFolderPath = (this.settings.templateFolder);
+							//insert at the end of the file the template with the same index
+							editor.setCursor(editor.lineCount(), 0);
+							// Get the content from template folder with the name of templateCSV[i]
+							// Get TFile from templateFolderPath and templateCSV[i]
+							const templateFile = this.app.vault.getAbstractFileByPath(templateFolderPath + "/" + this.settings.templateCSV[i]);
+							const content = this.app.vault.read(templateFile);
+
+						}
+
+					}
+					
+
+				}
+
 			}
 		});
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
@@ -94,6 +126,7 @@ export default class MetaGeneratedTemplates extends Plugin {
 	async saveSettings() {
 		await this.saveData(this.settings);
 	}
+		
 }
 
 class SampleModal extends Modal {
@@ -112,43 +145,4 @@ class SampleModal extends Modal {
 	}
 }
 
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MetaGeneratedTemplates;
 
-	constructor(app: App, plugin: MetaGeneratedTemplates) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		const {containerEl} = this;
-
-		containerEl.empty();
-
-		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
-
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
-				.onChange(async (value) => {
-					console.log('Secret: ' + value);
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
-		new Setting(containerEl)
-			.setName('Template Folder')
-			.setDesc('Folder where templates for the meta generated templates plugin are stored')
-			.addText(text => text
-				.setPlaceholder('templates/')
-				.setValue(this.plugin.settings.templateFolder)
-				.onChange(async (value) => {
-					console.log('Template Folder: ' + value);
-					this.plugin.settings.templateFolder = value;
-					await this.plugin.saveSettings();
-				}));
-
-	}
-}
